@@ -1,0 +1,20 @@
+{
+  "name": "auth-service",
+  "version": "1.0.0",
+  "description": "user auth service",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arindamsaha/mernspace-c-auth-service.git"
+  },
+  "author": "Arindam Saha <arindam.ui@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/arindamsaha/mernspace-c-auth-service/issues"
+  },
+  "homepage": "https://github.com/arindamsaha/mernspace-c-auth-service#readme"
+}
