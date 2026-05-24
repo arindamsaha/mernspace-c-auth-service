@@ -1,5 +1,3 @@
-function wellcome(name: string) {
-  console.log("hello" + name + "you are MERN stack now");
-}
+import {Configs} from "./config/index.js";
 
-wellcome("Arindam");
+console.log(Configs.PORT);
