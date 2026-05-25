@@ -1,5 +1,6 @@
 import {Configs} from "./config";
 import app from "./app";
+import logger from "./config/logger";
 
 console.log(Configs.PORT);
 
@@ -10,10 +11,10 @@ function startServer() {
     try {
        
         app.listen(PORT, () => {
-            console.log(`Server is running on port ${PORT}`);
+            logger.info(`Server started on port ${PORT}`);
         });
     } catch (error) {
-        console.error("Error starting server:", error);
+        logger.error("Error starting server:", error);
         process.exit(1);
     }
     // Your server code here
