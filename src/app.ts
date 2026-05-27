@@ -1,15 +1,18 @@
 import express, { NextFunction, Request, Response } from 'express';
-import logger from './config/logger';
+import logger from './config/logger.js';
 import createHttpError, { HttpError } from 'http-errors';
 
 const app = express();
 
 
 app.get('/', (req, res, next) => {
-  const err = createHttpError(401, 'Unauthorized access to the auth service');
-  next(err);
 
-  //res.send('Welcome to the auth service');
+// for testing the global error handler, you can uncomment the following lines to simulate an error and see how it's handled:
+
+  //const err = createHttpError(401, 'Unauthorized access to the auth service');
+  //next(err);
+
+  res.send('Welcome to the auth service');
 });
 
 

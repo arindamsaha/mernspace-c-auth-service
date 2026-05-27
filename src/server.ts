@@ -1,6 +1,6 @@
-import {Configs} from "./config";
-import app from "./app";
-import logger from "./config/logger";
+import {Configs} from "./config/index.js";
+import app from "./app.js";
+import logger from "./config/logger.js";
 
 console.log(Configs.PORT);
 

@@ -8,7 +8,9 @@ export default defineConfig([
     {
         ignores: ['dist', 'node_modules'],
         rules: {
-            "no-console": "off"
+            "no-console": "off",
+            "@typescript-eslint/no-misused-promises": "off",
+
         }
     }
 ]);
