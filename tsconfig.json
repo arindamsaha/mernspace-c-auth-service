@@ -36,13 +36,15 @@
     // Recommended Options
     "strict": true,
     "jsx": "react-jsx",
-    "verbatimModuleSyntax": false,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
   },
+  "ts-node": {
+    "esm": true,
+    "experimentalResolver": true
+  },
   "include": ["src"],
   "exclude": ["eslint.config.mts", "node_modules", "dist"]
 }
-
