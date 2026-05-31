@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import logger from './config/logger.js';
 import createHttpError, { HttpError } from 'http-errors';
+import authRouter from './routes/auth.js';
 
 const app = express();
 
@@ -14,6 +15,9 @@ app.get('/', (req, res, next) => {
 
   res.send('Welcome to the auth service Arindam Saha');
 });
+
+
+app.use("/auth", authRouter);
 
 
 
