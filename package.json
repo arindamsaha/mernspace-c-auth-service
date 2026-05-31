@@ -5,11 +5,7 @@
   "description": "user auth service",
   "main": "index.js",
   "scripts": {
-<<<<<<< HEAD
     "dev": "nodemon --exec tsx --legacy-watch src/server.ts",
-=======
-    "dev": "nodemon --exec tsx src/server.ts",
->>>>>>> f2fb7ecb407fc8cfdf8cde1b120b60c440726226
     "build": "tsc",
     "start": "node dist/server.js",
     "format": "npx prettier . --write",
