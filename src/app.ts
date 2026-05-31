@@ -12,7 +12,7 @@ app.get('/', (req, res, next) => {
   //const err = createHttpError(401, 'Unauthorized access to the auth service');
   //next(err);
 
-  res.send('Welcome to the auth service');
+  res.send('Welcome to the auth service Arindam Saha');
 });
 
 
