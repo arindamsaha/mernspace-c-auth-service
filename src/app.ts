@@ -1,3 +1,6 @@
+
+import "reflect-metadata";
+
 import express, { NextFunction, Request, Response } from 'express';
 import logger from './config/logger.js';
 import createHttpError, { HttpError } from 'http-errors';
