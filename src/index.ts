@@ -1,5 +1,6 @@
-import { AppDataSource } from "./data-source"
-import { User } from "./entities/User"
+import "reflect-metadata";
+import { AppDataSource } from "./config/data-source.js"
+import { User } from "./entities/User.js"
 
 AppDataSource.initialize().then(async () => {
 
@@ -7,7 +8,8 @@ AppDataSource.initialize().then(async () => {
     const user = new User()
     user.firstName = "Timber"
     user.lastName = "Saw"
-    user.age = 25
+    user.email = "timber@example.com"
+    user.password = "password123"
     await AppDataSource.manager.save(user)
     console.log("Saved a new user with id: " + user.id)
 
@@ -17,4 +19,4 @@ AppDataSource.initialize().then(async () => {
 
     console.log("Here you can setup and run express / fastify / any other framework.")
 
-}).catch(error => console.log(error))
+}).catch((error: Error) => console.log(error))

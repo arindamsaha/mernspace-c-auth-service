@@ -7,6 +7,7 @@ import createHttpError, { HttpError } from 'http-errors';
 import authRouter from './routes/auth.js';
 
 const app = express();
+app.use(express.json());
 
 
 app.get('/', (req, res, next) => {

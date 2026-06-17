@@ -5,7 +5,7 @@
    "description": "user auth service",
    "main": "index.js",
    "scripts": {
-      "dev": "cross-env NODE_ENV=dev  nodemon --exec tsx --legacy-watch src/server.ts",
+      "dev": "cross-env NODE_ENV=dev nodemon --exec tsx --legacy-watch src/bootstrap.ts",
       "build": "tsc",
       "start": "ts-node src/index.ts",
       "format": "npx prettier . --write",
@@ -56,3 +56,6 @@
       "winston": "^3.19.0"
    }
 }
+
+
+

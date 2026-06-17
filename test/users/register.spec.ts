@@ -80,8 +80,10 @@ describe("POST /auth/register", () => {
 
             const user = await userRepository.find();
 
-            expect(user.length).toHaveLength(1);
-
+            expect(user).toHaveLength(1);
+            expect(user[0].firstName).toBe(userData.firstName);
+            expect(user[0].lastName).toBe(userData.lastName);
+            expect(user[0].email).toBe(userData.email); 
 
         });
     });
