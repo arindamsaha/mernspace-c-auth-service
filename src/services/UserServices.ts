@@ -1,6 +1,7 @@
 import {Repository} from 'typeorm';
 import { User } from '../entities/User.js';
 import { userData } from '../types/index.js';
+import createHttpError from 'http-errors';
 
 export class UserServices {
 
@@ -9,13 +10,20 @@ export class UserServices {
 
     async create({firstName, lastName, email, password}: userData) {
 
+        try {
 
-        
-        await this.userRepository.save({
+            await this.userRepository.save({
             firstName: firstName,
             lastName: lastName,
             email: email,
             password: password
         })
+
+        }catch (err) {
+            const error = createHttpError(500, "Failed to store the user data in the database");
+            throw error;
+        }
+        
+        
     }
 }
