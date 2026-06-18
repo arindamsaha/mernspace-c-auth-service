@@ -20,7 +20,9 @@ describe("POST /auth/register", () => {
         });
 
         beforeEach(async () => {
-            await truncateTables(connections);
+            await connections.dropDatabase();
+            await connections.synchronize();
+            //await truncateTables(connections);
             //await connections.getRepository(User).clear();
         });
 
@@ -34,7 +36,7 @@ describe("POST /auth/register", () => {
                 firstName: "testuser",
                 lastName: "testuser",
                 email: "testuser@example.com",
-                password: "TestPassword123!",
+                password: "janina!",
             };
             //Act
             const response = await request(app)
@@ -51,7 +53,7 @@ describe("POST /auth/register", () => {
                 firstName: "testuser",
                 lastName: "testuser",
                 email: "testuser@example.com",
-                password: "TestPassword123!",
+                password: "janina!",
             };
             //Act
             const response = await request(app)
@@ -69,7 +71,7 @@ describe("POST /auth/register", () => {
                 firstName: "testuser",
                 lastName: "testuser",
                 email: "testuser@example.com",
-                password: "TestPassword123!",
+                password: "janina!",
             };
             //Act
             const response = await request(app)
@@ -84,6 +86,30 @@ describe("POST /auth/register", () => {
             expect(user[0].firstName).toBe(userData.firstName);
             expect(user[0].lastName).toBe(userData.lastName);
             expect(user[0].email).toBe(userData.email); 
+
+        });
+
+
+        it("User should be a Customer only", async () => { 
+
+             // Arrange
+            const userData = {
+                firstName: "roleCustomer",
+                lastName: "testuser",
+                email: "testuser@example.com",
+                password: "role Customer!",
+            };
+            //Act
+            const response = await request(app)
+                .post("/auth/register")
+                .send(userData);
+            // Assert
+            const userRepository = connections.getRepository(User);
+
+            const user = await userRepository.find();
+
+            expect(user).toHaveLength(1);
+            expect(user[0].role).toBe("customer");
 
         });
     });

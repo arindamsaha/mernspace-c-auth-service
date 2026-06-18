@@ -16,7 +16,8 @@ export class UserServices {
             firstName: firstName,
             lastName: lastName,
             email: email,
-            password: password
+            password: password,
+            role: "customer"
         })
 
         }catch (err) {
