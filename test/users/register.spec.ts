@@ -112,8 +112,57 @@ describe("POST /auth/register", () => {
             expect(user[0].role).toBe("customer");
 
         });
+
+        it("should store hashed password in the database", async () => {    
+            // Arrange
+            const userData = {
+                firstName: "testuser",
+                lastName: "testuser",
+                email: "testuser@example.com",
+                password: "janina!",
+            };
+
+            //Act
+            const response = await request(app)
+                .post("/auth/register")
+                .send(userData);    
+
+            // Assert
+
+            const userRepository = connections.getRepository(User);
+            const user = await userRepository.find();
+            console.log("hashedPassword", user[0].password);
+
+            expect(user[0].password).not.toBe(userData.password);
+
+        });
+
+
+        it("Email should be unique", async () => {    
+            // Arrange
+            const userData = {
+                firstName: "testuser",
+                lastName: "testuser",
+                email: "testuser@example.com",
+                password: "janina!",
+            };
+
+            const userRepository = connections.getRepository(User);
+            const user = await userRepository.save({...userData, role: "customer"});
+
+            //Act
+            const response = await request(app)
+                .post("/auth/register")
+                .send(userData);    
+
+            // Assert
+            const users = await userRepository.find();
+            
+            expect(response.statusCode).toBe(400);
+            expect(users).toHaveLength(1);
+
+        });
     });
 
 
 });
-

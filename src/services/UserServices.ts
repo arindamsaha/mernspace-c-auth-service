@@ -2,6 +2,8 @@ import {Repository} from 'typeorm';
 import { User } from '../entities/User.js';
 import { userData } from '../types/index.js';
 import createHttpError from 'http-errors';
+import bcrypt from 'bcrypt';
+
 
 export class UserServices {
 
@@ -10,13 +12,25 @@ export class UserServices {
 
     async create({firstName, lastName, email, password}: userData) {
 
+
+        const existingUser = await this.userRepository.findOne({where: {email: email}});
+
+        if (existingUser) {
+            throw createHttpError(400, "User with this email already exists");
+        }
+
+        const saltRounds = 10;
+
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        
+
         try {
 
             await this.userRepository.save({
             firstName: firstName,
             lastName: lastName,
             email: email,
-            password: password,
+            password: hashedPassword,
             role: "customer"
         })
 
