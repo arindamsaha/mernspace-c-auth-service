@@ -2,6 +2,8 @@ import { NextFunction, Response } from 'express';
 import { RegisterRequestBody } from '../types/index.js';
 import { UserServices } from '../services/UserServices.js';
 import { Logger } from 'winston';
+import createHttpError from 'http-errors';
+import { validationResult } from 'express-validator/lib/validation-result.js';
 
 
 
@@ -15,7 +17,22 @@ export class AuthController {
         //res.status(201).send("User registered successfully");
 
 
+        const result = validationResult(req);
+        if (!result.isEmpty()) {
+            return res.status(400).json({ errors: result.array() });
+        }
+
         const {firstName, lastName, email, password} = req.body;
+
+
+        if(!email) {
+            
+
+            const error = createHttpError(400, "Email is required");
+            next(error);
+            return;
+        }
+
         this.logger.debug("Received registration request", {email: email, firstName: firstName, lastName: lastName,password: "********"});
 
         try {
