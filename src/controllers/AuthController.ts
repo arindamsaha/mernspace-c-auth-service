@@ -25,10 +25,10 @@ export class AuthController {
         const {firstName, lastName, email, password} = req.body;
 
 
-        if(!email) {
+        if(!email || !firstName ) {
             
 
-            const error = createHttpError(400, "Email is required");
+            const error = createHttpError(400, "Email and first name are required");
             next(error);
             return;
         }

@@ -6,5 +6,13 @@ export default checkSchema({
   email: {
     errorMessage: 'email is required',
     notEmpty: true,
+    trim: true,
+    isEmail: {
+      errorMessage: 'Please provide a valid email address',
+    },
+  },
+  firstName: {
+    errorMessage: 'First name is required',
+    notEmpty: true,
   }
 });

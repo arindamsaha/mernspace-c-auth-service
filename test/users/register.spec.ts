@@ -180,5 +180,69 @@ describe('POST /auth/register', () => {
             const users = await userRepository.find();
             expect(users).toHaveLength(0);
         });
+
+        
+    });
+
+    describe('Field sanitization', () => {
+        it('should trim whitespace from email', async () => {
+            // Arrange
+            const userData = {
+                firstName: 'testuser',
+                lastName: 'testuser',
+                email: ' arindam@example.com ',
+                password: 'janina!',
+            };
+            // Act
+           await request(app)
+                .post('/auth/register')
+                .send(userData);
+            // Assert
+
+
+            const userRepository = connections.getRepository(User);
+            const users = await userRepository.find();
+            expect(users[0].email).toBe('arindam@example.com');
+        });
+
+        it('should return 400 for an invalid email', async () => {
+            // Arrange
+            const userData = {
+                firstName: 'testuser',
+                lastName: 'testuser',
+                email: ' arindam@example.com ',
+                password: 'janina!',
+            };
+            // Act
+           await request(app)
+                .post('/auth/register')
+                .send(userData);
+            // Assert
+
+
+            const userRepository = connections.getRepository(User);
+            const users = await userRepository.find();
+             expect(users).toHaveLength(1);
+        });
+        it('should return 400 if FirstName is missing', async () => {
+            // Arrange
+            const userData = {
+                firstName: '',
+                lastName: 'testuser',
+                email: 'arindam@example.com',
+                password: 'janina!',
+            };
+            // Act
+            const response = await request(app)
+                .post('/auth/register')
+                .send(userData);
+            // Assert
+
+            expect(response.statusCode).toBe(400);
+
+            const userRepository = connections.getRepository(User);
+            const users = await userRepository.find();
+            expect(users).toHaveLength(0);
+        });
     });
 });
