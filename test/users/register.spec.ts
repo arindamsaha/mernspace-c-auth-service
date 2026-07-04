@@ -11,7 +11,7 @@ import app from '../../src/app';
 import { DataSource } from 'typeorm';
 import { AppDataSource } from '../../src/config/data-source';
 import { User } from '../../src/entities/User';
-import { truncateTables } from '../utils';
+import { isJwt, truncateTables } from '../utils';
 
 describe('POST /auth/register', () => {
     let connections: DataSource;
@@ -157,6 +157,45 @@ describe('POST /auth/register', () => {
             expect(response.statusCode).toBe(400);
             expect(users).toHaveLength(1);
         });
+        it('should return theaccess token and refrash token inside a cookie', async () => {
+            // Arrange
+            const userData = {
+                firstName: 'testuser',
+                lastName: 'testuser',
+                email: 'testuser@example.com',
+                password: 'janina!',
+            };
+            // Act
+            const response = await request(app)
+                .post('/auth/register')
+                .send(userData);
+
+            interface Headers {
+                'set-cookie': string[];
+            }
+            // Assert
+            let accessTokenCookie = null;
+            let refreshTokenCookie = null;
+
+            const cookies = response.headers['set-cookie'] as unknown as string[];
+
+            cookies.forEach((cookie: string) => {
+                if(cookie.startsWith('accessToken=')) {
+                    accessTokenCookie = cookie.split(';')[0].split('=')[1];
+                }
+                if(cookie.startsWith('refreshToken=')) {
+                    refreshTokenCookie = cookie.split(';')[0].split('=')[1];
+                }
+            });
+            expect(accessTokenCookie).not.toBeNull();
+            expect(refreshTokenCookie).not.toBeNull();
+
+            expect(isJwt(accessTokenCookie)).toBeTruthy();
+            expect(isJwt(refreshTokenCookie)).toBeTruthy();
+
+        });
+
+        
     });
 
     describe('given valid user data', () => {

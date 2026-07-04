@@ -40,6 +40,11 @@ export class AuthController {
 
             this.logger.info("User registered successfully"); 
 
+            const accessToken = "adasdasdasdasdasdasdasdasdasdasdasdasdasdasdasd"; // await this.userServices.generateAccessToken(user) ;
+            const refreshToken = "adasdasdasdasdasdasdasdasdasdasdasdasdasdasdasd"; // await this.userServices.generateRefreshToken(user);
+
+            res.cookie('accessToken', accessToken, { domain: 'localhost', httpOnly: true, secure: true, sameSite: 'strict', maxAge: 15 * 60 * 1000  });
+            res.cookie('refreshToken', refreshToken, { domain: 'localhost', httpOnly: true, secure: true, sameSite: 'strict', maxAge: 7 * 24 * 60 * 1000  });
             // This is json send
             res.status(201).json({ message: "User registered successfully" });
         }catch (error) {
