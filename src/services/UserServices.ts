@@ -26,13 +26,14 @@ export class UserServices {
 
         try {
 
-            await this.userRepository.save({
+            const user =await this.userRepository.save({
             firstName: firstName,
             lastName: lastName,
             email: email,
             password: hashedPassword,
             role: "customer"
         })
+         return user;
 
         }catch (err) {
             const error = createHttpError(500, "Failed to store the user data in the database");

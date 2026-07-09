@@ -1,8 +1,11 @@
+import fs from 'fs';
+import path from 'path';
 import { NextFunction, Response } from 'express';
 import { RegisterRequestBody } from '../types/index.js';
 import { UserServices } from '../services/UserServices.js';
 import { Logger } from 'winston';
 import createHttpError from 'http-errors';
+import {sign} from 'jsonwebtoken';
 import { validationResult } from 'express-validator/lib/validation-result.js';
 
 
@@ -39,12 +42,35 @@ export class AuthController {
             const user = await this.userServices.create({firstName, lastName, email, password});
 
             this.logger.info("User registered successfully"); 
+            let privateKey: Buffer;
 
-            const accessToken = "adasdasdasdasdasdasdasdasdasdasdasdasdasdasdasd"; // await this.userServices.generateAccessToken(user) ;
-            const refreshToken = "adasdasdasdasdasdasdasdasdasdasdasdasdasdasdasd"; // await this.userServices.generateRefreshToken(user);
+            try {
+
+                const keyPath = path.join(process.cwd(), "keys", "privateKey.pem");
+
+                privateKey = fs.readFileSync(keyPath);
+
+
+                 //privateKey = fs.readFileSync(path.join(path.join(__dirname, '../../keys/privateKey.pem')));
+            } catch (error) {
+
+                const err = createHttpError(500, "Failed to read the private key for signing JWT");
+                next(err);
+                return;
+            }
+
+
+            const accessToken = sign({ sub: String(user.id), role: user.role }, privateKey ,
+             { 
+                expiresIn: '1h',
+                algorithm: 'RS256',
+                issuer: 'auth-service',
+            });
+
+            //const refreshToken = sign({ sub: String(user.id), role: user.role }, process.env.JWT_REFRESH_TOKEN_SECRET!, { expiresIn: '7d' });
 
             res.cookie('accessToken', accessToken, { domain: 'localhost', httpOnly: true, secure: true, sameSite: 'strict', maxAge: 15 * 60 * 1000  });
-            res.cookie('refreshToken', refreshToken, { domain: 'localhost', httpOnly: true, secure: true, sameSite: 'strict', maxAge: 7 * 24 * 60 * 1000  });
+            // res.cookie('refreshToken', refreshToken, { domain: 'localhost', httpOnly: true, secure: true, sameSite: 'strict', maxAge: 7 * 24 * 60 * 1000  });
             // This is json send
             res.status(201).json({ message: "User registered successfully" });
         }catch (error) {
