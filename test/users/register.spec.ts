@@ -195,7 +195,7 @@ describe('POST /auth/register', () => {
 
             expect(isJwt(accessTokenCookie)).toBeTruthy();
             console.log("Access Token Cookie:", accessTokenCookie);
-            //expect(isJwt(refreshTokenCookie)).toBeTruthy();
+            expect(isJwt(refreshTokenCookie)).toBeTruthy();
 
         });
 
