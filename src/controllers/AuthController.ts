@@ -8,6 +8,7 @@ import createHttpError from 'http-errors';
 import {sign} from 'jsonwebtoken';
 import { validationResult } from 'express-validator/lib/validation-result.js';
 import { Configs } from '../config/index.js';
+import { AppDataSource } from '../config/data-source.js';
 
 
 
@@ -68,17 +69,30 @@ export class AuthController {
                 issuer: 'auth-service',
             });
 
+
+            //persist the refresh token in the database
+
+            const refreshTokenRepository = AppDataSource.getRepository('RefreshToken');
+            const newRefreshToken = await refreshTokenRepository.save({
+
+                user: user,
+                expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days from now
+            })
+
             const refreshToken = sign({ sub: String(user.id), role: user.role }, Configs.REFRESH_TOKEN_SECRET!, 
             {
                 expiresIn: '7d',
                 algorithm: 'HS256',
-                issuer: 'auth-service'
+                issuer: 'auth-service',
+                jwtid: String((newRefreshToken).id) // Store the refresh token ID in the JWT
             });
 
             res.cookie('accessToken', accessToken, { domain: 'localhost', httpOnly: true, secure: true, sameSite: 'strict', maxAge: 15 * 60 * 1000  });
             res.cookie('refreshToken', refreshToken, { domain: 'localhost', httpOnly: true, secure: true, sameSite: 'strict', maxAge: 7 * 24 * 60 * 1000  });
             // This is json send
-            res.status(201).json({ message: "User registered successfully" });
+            res.status(201).json({ 
+                id: user.id,
+                message: "User registered successfully" });
         }catch (error) {
 
             next(error);

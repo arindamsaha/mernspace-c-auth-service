@@ -199,6 +199,36 @@ describe('POST /auth/register', () => {
 
         });
 
+        it('should store refresh token in database', async () => {
+
+            // Arrange
+            const userData = {
+                firstName: 'testuser',
+                lastName: 'testuser',
+                email: 'testuser@example.com',
+                password: 'janina!',
+            };
+
+            //Act
+            const response = await request(app)
+                .post('/auth/register')
+                .send(userData);
+
+            // Assert
+            console.log("Response Body:", response.body);
+
+            const refreshTokenRepository = connections.getRepository('RefreshToken');
+            const refreshTokens = await refreshTokenRepository.find();
+            
+
+            const token = await refreshTokenRepository.createQueryBuilder('refreshToken').where('refreshToken.userId = :userId', {
+                    userId: (response.body as Record<string, string>).id
+                }).getMany();
+
+            expect(token).toHaveLength(1);
+            expect(refreshTokens).toHaveLength(1);
+
+        });
         
     });
 
