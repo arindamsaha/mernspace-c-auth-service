@@ -6,12 +6,14 @@ import { User } from "../entities/User.js";
 import logger from "../config/logger.js";
 import { body } from "express-validator/lib/middlewares/validation-chain-builders.js";
 import registerValidator from "../validators/register-validator.js";
+import { TokenService } from "../services/TokenService.js";
 
 
 const userRepository = AppDataSource.getRepository(User);
 const router = express.Router();
 const userServices = new UserServices(userRepository);
-const authController = new AuthController(userServices, logger);
+const tokenService = new TokenService();
+const authController = new AuthController(userServices, logger, tokenService);
 
 
 
