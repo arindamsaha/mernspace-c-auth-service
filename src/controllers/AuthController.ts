@@ -6,13 +6,19 @@ import { Logger } from 'winston';
 import createHttpError from 'http-errors';
 import { validationResult } from 'express-validator/lib/validation-result.js';
 import {TokenService} from '../services/TokenService.js';
+import { CredentialService } from '../services/CradentialService.js';
 
 
 
 
 export class AuthController {
 
-    constructor(private userServices: UserServices, private logger: Logger, private TokenService: TokenService) {}
+    constructor(
+        private userServices: UserServices,
+        private logger: Logger,
+        private TokenService: TokenService,
+        private CradentialService: CredentialService
+    ) {}
 
     async register(req: RegisterRequestBody, res: Response, next: NextFunction) {
         // This is normal send
@@ -93,6 +99,77 @@ export class AuthController {
             res.status(201).json({ 
                 id: user.id,
                 message: "User registered successfully" });
+        }catch (error) {
+
+            next(error);
+            return;
+        }
+
+        
+
+        
+    }
+
+
+
+    async login(req: RegisterRequestBody, res: Response, next: NextFunction) {
+        // This is normal send
+        //res.status(201).send("User registered successfully");
+
+
+        const result = validationResult(req);
+        if (!result.isEmpty()) {
+            return res.status(400).json({ errors: result.array() });
+        }
+
+        const {email, password} = req.body;
+
+
+        if(!email || !password ) {
+            
+
+            const error = createHttpError(400, "Email and password are required");
+            next(error);
+            return;
+        }
+
+        this.logger.debug("Received login request", {email: email, password: "********"});
+        
+        // check user email in the database
+        // compare the password with the hashed password in the database
+        //genarate access token and refresh token
+        //add the refresh token to kokies and access token to cookies
+        //return the response with the user id and message
+
+
+        try {
+            const user = await this.userServices.findByEmail(email);
+            if(!user) {
+                const error = createHttpError(401, "Invalid email or password");
+                next(error);
+                return;
+            }
+
+            const isPasswordValid = await this.CradentialService.comparePassword(password, user.password);
+
+
+            if(!isPasswordValid) {
+                const error = createHttpError(401, "Invalid email or password");
+                next(error);
+                return;
+            }
+           
+
+            const accessToken = this.TokenService.genarateAccessToken({ sub: String(user.id), role: user.role });
+
+           
+            const refreshToken = await this.TokenService.genarateRefreshToken({ sub: String(user.id), role: user.role });
+
+            res.cookie('accessToken', accessToken, { domain: 'localhost', httpOnly: true, secure: true, sameSite: 'strict', maxAge: 15 * 60 * 1000  });
+            res.cookie('refreshToken', refreshToken, { domain: 'localhost', httpOnly: true, secure: true, sameSite: 'strict', maxAge: 7 * 24 * 60 * 1000  });
+            // This is json send
+            res.status(201).json({ 
+                id: user.id });
         }catch (error) {
 
             next(error);
