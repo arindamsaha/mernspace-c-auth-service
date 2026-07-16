@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import createHttpError from 'http-errors';
-import { sign, JwtPayload } from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 import { Configs } from '../config/index.js';
 import { AppDataSource } from '../config/data-source.js';
 
@@ -10,7 +10,7 @@ import { AppDataSource } from '../config/data-source.js';
 
 
 export class TokenService {
-    genarateAccessToken(payload: JwtPayload) {
+    genarateAccessToken(payload: jwt.JwtPayload) {
         let privateKey: Buffer;
 
         try {
@@ -27,7 +27,7 @@ export class TokenService {
             throw err
         }
 
-        const accessToken = sign(payload, privateKey, {
+        const accessToken = jwt.sign(payload, privateKey, {
             expiresIn: '1h',
             algorithm: 'RS256',
             issuer: 'auth-service',
@@ -35,7 +35,7 @@ export class TokenService {
         return accessToken;
     }
 
-    async genarateRefreshToken(payload: JwtPayload) {
+    async genarateRefreshToken(payload: jwt.JwtPayload) {
 
         const refreshTokenRepository =
             AppDataSource.getRepository('RefreshToken');
@@ -43,7 +43,7 @@ export class TokenService {
             user: payload.sub,
             expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
         });
-        const refreshToken = sign(
+        const refreshToken = jwt.sign(
             payload,
             Configs.REFRESH_TOKEN_SECRET!,
             {
